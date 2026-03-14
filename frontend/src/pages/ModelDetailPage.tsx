@@ -261,30 +261,36 @@ export function ModelDetailPage() {
           <h2 style={{ fontSize: 16, marginBottom: 12, color: "#ccc" }}>
             Styled Variations ({styled.length})
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {styled.map((s) => {
               const sourceView = views.find((v) => v.id === s.view_id);
               const hasRecon = recons.some((r) => r.styled_image_id === s.id);
               return (
                 <div key={s.id} style={{ background: "#111", borderRadius: 8, overflow: "hidden", border: "1px solid #222" }}>
-                  {/* Before/After */}
-                  <div style={{ display: "flex" }}>
+                  {/* Before/After side by side, full width */}
+                  <div style={{ display: "grid", gridTemplateColumns: sourceView ? "1fr 1fr" : "1fr", gap: 2 }}>
                     {sourceView && (
-                      <img src={viewImageUrl(modelId, sourceView.id)} alt="Original" style={{ width: "50%" }} />
+                      <div>
+                        <div style={{ padding: "6px 10px", fontSize: 11, color: "#666", background: "#0a0a0a" }}>Original</div>
+                        <img src={viewImageUrl(modelId, sourceView.id)} alt="Original" style={{ width: "100%", display: "block" }} />
+                      </div>
                     )}
-                    <img src={styledImageUrl(modelId, s.id)} alt="Styled" style={{ width: sourceView ? "50%" : "100%" }} />
-                  </div>
-                  <div style={{ padding: 10 }}>
-                    <div style={{ fontSize: 11, color: "#888", marginBottom: 6, lineHeight: 1.4 }}>
-                      {s.prompt.length > 80 ? s.prompt.slice(0, 80) + "..." : s.prompt}
+                    <div>
+                      <div style={{ padding: "6px 10px", fontSize: 11, color: "#4a9eff", background: "#0a0a0a" }}>Styled</div>
+                      <img src={styledImageUrl(modelId, s.id)} alt="Styled" style={{ width: "100%", display: "block" }} />
                     </div>
-                    <div style={{ display: "flex", gap: 6 }}>
+                  </div>
+                  <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ flex: 1, fontSize: 12, color: "#888", lineHeight: 1.4 }}>
+                      {s.prompt}
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                       {!hasRecon && (
                         <button
                           onClick={() => handleReconstruct(s.id)}
                           disabled={reconstructing === s.id}
                           style={{
-                            padding: "4px 12px", fontSize: 11, borderRadius: 4, cursor: "pointer",
+                            padding: "6px 16px", fontSize: 12, borderRadius: 6, cursor: "pointer",
                             background: reconstructing === s.id ? "#333" : "#4a9eff",
                             border: "none", color: "#fff",
                           }}
@@ -293,11 +299,11 @@ export function ModelDetailPage() {
                         </button>
                       )}
                       {hasRecon && (
-                        <span style={{ fontSize: 11, color: "#5cb85c", padding: "4px 0" }}>3D generated</span>
+                        <span style={{ fontSize: 12, color: "#5cb85c", padding: "6px 0" }}>3D generated</span>
                       )}
                       <button
                         onClick={() => handleDeleteStyled(s.id)}
-                        style={{ padding: "4px 10px", fontSize: 11, borderRadius: 4, cursor: "pointer", background: "none", border: "1px solid #333", color: "#666" }}
+                        style={{ padding: "6px 12px", fontSize: 12, borderRadius: 6, cursor: "pointer", background: "none", border: "1px solid #333", color: "#666" }}
                       >
                         Delete
                       </button>

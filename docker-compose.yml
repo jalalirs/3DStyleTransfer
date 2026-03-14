@@ -18,7 +18,7 @@ services:
       - PROJECT_ROOT=/data
       - ASSETS_DIR=/data/assets/models
       - STORAGE_DIR=/data/storage
-      - DATABASE_URL=sqlite+aiosqlite:///./style_transfer.db
+      - DATABASE_URL=sqlite+aiosqlite:////data/storage/style_transfer.db
       - REDIS_URL=redis://redis:6379/0
       # Google Cloud (Imagen)
       - GCP_CREDENTIALS_PATH=/app/gcp-credentials.json
