@@ -38,6 +38,11 @@ def run_triposr_inference(model, input_path: Path, output_dir: Path) -> Path:
     try:
         from rembg import remove
         image = remove(image)
+        # rembg outputs RGBA — convert back to RGB with white background
+        if image.mode == "RGBA":
+            bg = Image.new("RGB", image.size, (255, 255, 255))
+            bg.paste(image, mask=image.split()[3])
+            image = bg
     except Exception:
         logger.warning("Background removal failed, using original image")
 

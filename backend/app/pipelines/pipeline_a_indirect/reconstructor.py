@@ -26,7 +26,15 @@ async def reconstruct_3d(
         )
 
     # Use the front-facing view (first image) for best reconstruction
+    # Convert to RGB PNG (TripoSR expects 3-channel)
+    from PIL import Image
+    import io
+
     best_image = styled_images[0]
+    img = Image.open(best_image).convert("RGB")
+    img_buffer = io.BytesIO()
+    img.save(img_buffer, format="PNG")
+    img_bytes = img_buffer.getvalue()
 
     async with httpx.AsyncClient(timeout=300) as client:
         # Check GPU service health
@@ -40,12 +48,11 @@ async def reconstruct_3d(
             )
 
         # Send image for reconstruction
-        with open(best_image, "rb") as f:
-            resp = await client.post(
-                f"{gpu_url}/reconstruct",
-                files={"image": ("styled.png", f, "image/png")},
-                data={"method": method},
-            )
+        resp = await client.post(
+            f"{gpu_url}/reconstruct",
+            files={"image": ("styled.png", img_bytes, "image/png")},
+            data={"method": method},
+        )
 
         if resp.status_code != 200:
             raise RuntimeError(f"GPU reconstruction failed ({resp.status_code}): {resp.text}")
