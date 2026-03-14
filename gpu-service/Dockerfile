@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip python3-dev \
     git wget \
+    ninja-build \
     libgl1 libglib2.0-0 libegl1 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,6 +22,9 @@ RUN pip install --no-cache-dir \
 # Install other deps
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install torchmcubes (needed by TripoSR, must build from source)
+RUN pip install --no-cache-dir git+https://github.com/tatsy/torchmcubes.git
 
 # Clone TripoSR and install its dependencies
 RUN git clone https://github.com/VAST-AI-Research/TripoSR.git /opt/TripoSR \
