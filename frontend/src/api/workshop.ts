@@ -79,5 +79,5 @@ export function styledUrl(sessionId: string, index: number): string {
 }
 
 export function reconstructionUrl(sessionId: string): string {
-  return `${api.defaults.baseURL}/api/workshop/sessions/${sessionId}/reconstruction`;
+  return `${api.defaults.baseURL}/api/workshop/sessions/${sessionId}/reconstruction/model.obj`;
 }

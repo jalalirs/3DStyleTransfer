@@ -226,8 +226,8 @@ async def reconstruct(session_id: str, method: str = "triposr", image_index: int
     return session
 
 
-@router.get("/sessions/{session_id}/reconstruction")
-async def get_reconstruction(session_id: str):
+@router.get("/sessions/{session_id}/reconstruction/{filename}")
+async def get_reconstruction(session_id: str, filename: str = "model.obj"):
     if session_id not in _sessions:
         raise HTTPException(404, "Session not found")
     session = _sessions[session_id]

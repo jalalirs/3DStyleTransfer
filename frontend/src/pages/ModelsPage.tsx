@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { listModels, uploadModel } from "../api/models";
-import { ModelViewer } from "../components/viewer/ModelViewer";
-import { getModelUrl } from "../api/client";
 import type { Model3D } from "../types/model";
 
 const CATEGORIES = [
@@ -18,7 +16,6 @@ const CATEGORIES = [
 export function ModelsPage() {
   const [models, setModels] = useState<Model3D[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedModel, setSelectedModel] = useState<Model3D | null>(null);
   const [loading, setLoading] = useState(true);
   const fileInput = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -122,13 +119,10 @@ export function ModelsPage() {
             {models.map((m) => (
               <div
                 key={m.id}
-                onClick={() => setSelectedModel(m)}
+                onClick={() => navigate(`/models/${m.id}`)}
                 style={{
-                  background: selectedModel?.id === m.id ? "#1a1a2e" : "#111",
-                  border:
-                    selectedModel?.id === m.id
-                      ? "1px solid #4a9eff"
-                      : "1px solid #222",
+                  background: "#111",
+                  border: "1px solid #222",
                   borderRadius: 8,
                   padding: 12,
                   cursor: "pointer",
@@ -153,54 +147,6 @@ export function ModelsPage() {
             )}
           </div>
 
-          {/* Preview panel */}
-          {selectedModel && (
-            <div
-              style={{
-                width: 450,
-                flexShrink: 0,
-                background: "#111",
-                borderRadius: 8,
-                border: "1px solid #222",
-                overflow: "hidden",
-              }}
-            >
-              <ModelViewer
-                url={getModelUrl(selectedModel.file_path)}
-                style={{ height: 350 }}
-              />
-              <div style={{ padding: 16 }}>
-                <h3 style={{ margin: "0 0 8px", fontSize: 16 }}>
-                  {selectedModel.name}
-                </h3>
-                <div style={{ fontSize: 12, color: "#888", lineHeight: 1.8 }}>
-                  <div>Category: {selectedModel.category}</div>
-                  <div>Format: {selectedModel.original_format}</div>
-                  <div>Vertices: {selectedModel.vertex_count.toLocaleString()}</div>
-                  <div>Faces: {selectedModel.face_count.toLocaleString()}</div>
-                  <div>Source: {selectedModel.source}</div>
-                  {selectedModel.license && <div>License: {selectedModel.license}</div>}
-                </div>
-                <button
-                  onClick={() =>
-                    navigate("/new-job", { state: { modelId: selectedModel.id } })
-                  }
-                  style={{
-                    marginTop: 12,
-                    padding: "8px 20px",
-                    background: "#4a9eff",
-                    border: "none",
-                    color: "#fff",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    width: "100%",
-                  }}
-                >
-                  Use in Style Transfer
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

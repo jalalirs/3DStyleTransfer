@@ -1,8 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 const NAV_ITEMS = [
-  { path: "/", label: "Workshop", icon: "W" },
-  { path: "/models", label: "Models", icon: "M" },
+  { path: "/", label: "Models", icon: "M" },
   { path: "/jobs", label: "Jobs", icon: "J" },
   { path: "/compare", label: "Compare", icon: "C" },
 ];
