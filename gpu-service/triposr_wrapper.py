@@ -32,19 +32,23 @@ def load_triposr_model():
 
 def run_triposr_inference(model, input_path: Path, output_dir: Path) -> Path:
     """Run TripoSR on a single image, returns path to output OBJ."""
-    image = Image.open(input_path).convert("RGB")
+    image = Image.open(input_path)
 
     # Remove background for better reconstruction
     try:
         from rembg import remove
-        image = remove(image)
-        # rembg outputs RGBA — convert back to RGB with white background
-        if image.mode == "RGBA":
-            bg = Image.new("RGB", image.size, (255, 255, 255))
-            bg.paste(image, mask=image.split()[3])
-            image = bg
-    except Exception:
-        logger.warning("Background removal failed, using original image")
+        image_rgba = remove(image.convert("RGB"))
+        # Composite RGBA onto white background to get clean RGB
+        bg = Image.new("RGB", image_rgba.size, (255, 255, 255))
+        bg.paste(image_rgba, mask=image_rgba.split()[3])
+        image = bg
+    except Exception as e:
+        logger.warning(f"Background removal failed: {e}, using original image")
+        image = image.convert("RGB")
+
+    # Ensure RGB
+    image = image.convert("RGB")
+    logger.info(f"Input image: {image.size}, mode={image.mode}")
 
     # Run model
     device = "cuda" if torch.cuda.is_available() else "cpu"
