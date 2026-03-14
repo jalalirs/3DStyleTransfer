@@ -61,6 +61,7 @@ RUN pip install --no-cache-dir \
     einops omegaconf huggingface-hub transformers accelerate \
     trimesh pillow numpy scipy rembg onnxruntime-gpu \
     pygltflib safetensors diffusers tokenizers sentencepiece \
+    starlette uvicorn fastapi python-multipart httpx \
     2>/dev/null || true
 
 # Verify torch wasn't replaced
