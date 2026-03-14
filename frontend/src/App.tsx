@@ -5,13 +5,15 @@ import { JobsPage } from "./pages/JobsPage";
 import { JobDetailPage } from "./pages/JobDetailPage";
 import { NewJobPage } from "./pages/NewJobPage";
 import { ComparePage } from "./pages/ComparePage";
+import { WorkshopPage } from "./pages/WorkshopPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<ModelsPage />} />
+          <Route path="/" element={<WorkshopPage />} />
+          <Route path="/models" element={<ModelsPage />} />
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/jobs/:jobId" element={<JobDetailPage />} />
           <Route path="/new-job" element={<NewJobPage />} />

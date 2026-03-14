@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db, get_session, async_session
-from app.api import models, jobs, pipelines
+from app.api import models, jobs, pipelines, workshop
 
 
 @asynccontextmanager
@@ -49,6 +49,7 @@ if settings.project_root.exists():
 app.include_router(models.router)
 app.include_router(jobs.router)
 app.include_router(pipelines.router)
+app.include_router(workshop.router)
 
 
 @app.get("/api/health")

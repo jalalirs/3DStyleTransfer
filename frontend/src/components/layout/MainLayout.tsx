@@ -1,10 +1,10 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 const NAV_ITEMS = [
-  { path: "/", label: "Models", icon: "🕌" },
-  { path: "/jobs", label: "Jobs", icon: "⚙" },
-  { path: "/new-job", label: "New Job", icon: "+" },
-  { path: "/compare", label: "Compare", icon: "⇔" },
+  { path: "/", label: "Workshop", icon: "W" },
+  { path: "/models", label: "Models", icon: "M" },
+  { path: "/jobs", label: "Jobs", icon: "J" },
+  { path: "/compare", label: "Compare", icon: "C" },
 ];
 
 export function MainLayout() {
