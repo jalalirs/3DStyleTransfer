@@ -1,5 +1,6 @@
 """TripoSR wrapper — single image to 3D mesh in ~0.5s on GPU."""
 
+import sys
 import logging
 from pathlib import Path
 
@@ -8,6 +9,9 @@ import numpy as np
 from PIL import Image
 
 logger = logging.getLogger(__name__)
+
+# Add TripoSR to path
+sys.path.insert(0, "/opt/TripoSR")
 
 
 def load_triposr_model():
@@ -28,21 +32,19 @@ def load_triposr_model():
 
 def run_triposr_inference(model, input_path: Path, output_dir: Path) -> Path:
     """Run TripoSR on a single image, returns path to output OBJ."""
-    from tsr.utils import remove_background, resize_foreground
-
     image = Image.open(input_path).convert("RGB")
 
     # Remove background for better reconstruction
     try:
         from rembg import remove
         image = remove(image)
-        image = resize_foreground(image, ratio=0.85)
     except Exception:
         logger.warning("Background removal failed, using original image")
 
     # Run model
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     with torch.no_grad():
-        scene_codes = model([image], device=model.device)
+        scene_codes = model([image], device=device)
 
     # Extract mesh
     meshes = model.extract_mesh(scene_codes, resolution=256)

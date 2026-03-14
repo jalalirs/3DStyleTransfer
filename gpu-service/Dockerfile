@@ -22,12 +22,15 @@ RUN pip install --no-cache-dir \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Clone TripoSR
+# Clone TripoSR and install its dependencies
 RUN git clone https://github.com/VAST-AI-Research/TripoSR.git /opt/TripoSR \
-    && cd /opt/TripoSR && pip install --no-cache-dir -e .
+    && cd /opt/TripoSR \
+    && pip install --no-cache-dir -r requirements.txt 2>/dev/null || true
 
-# Clone InstantMesh
-RUN git clone https://github.com/TencentARC/InstantMesh.git /opt/InstantMesh
+# Clone InstantMesh and install its dependencies
+RUN git clone https://github.com/TencentARC/InstantMesh.git /opt/InstantMesh \
+    && cd /opt/InstantMesh \
+    && pip install --no-cache-dir -r requirements.txt 2>/dev/null || true
 
 # Copy service code
 COPY . .
