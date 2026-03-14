@@ -1,13 +1,16 @@
 """REST API for job management."""
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
 from app.database import get_session
 from app.db_models.job import Job
+from app.config import settings
 from app.schemas.job import JobCreate, JobResponse
 from app.pipelines.registry import get_pipeline
 from app.services.storage import get_job_dir
@@ -154,3 +157,19 @@ async def cancel_job(job_id: str, session: AsyncSession = Depends(get_session)):
     session.add(job)
     await session.commit()
     return {"status": "cancelled"}
+
+
+@router.get("/{job_id}/artifacts/{artifact_type}/{filename}")
+async def get_artifact(job_id: str, artifact_type: str, filename: str):
+    """Serve intermediate artifact files (renders, styled images)."""
+    if artifact_type not in ("renders", "styled"):
+        raise HTTPException(status_code=400, detail="Invalid artifact type")
+    # Sanitize filename
+    if ".." in filename or "/" in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+    file_path = settings.jobs_dir / job_id / "intermediate" / artifact_type / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Artifact not found")
+
+    return FileResponse(file_path, media_type="image/png")

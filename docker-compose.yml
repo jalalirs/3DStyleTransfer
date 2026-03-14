@@ -5,6 +5,8 @@ services:
       dockerfile: docker/Dockerfile.backend
     ports:
       - "8111:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend/app:/app/app
       - ./assets:/data/assets
@@ -23,7 +25,7 @@ services:
       - GCP_PROJECT_ID=m3ajem
       - GCP_LOCATION=us-central1
       # GPU reconstruction service (Tailscale IP of your GPU machine)
-      - GPU_SERVICE_URL=${GPU_SERVICE_URL:-}
+      - GPU_SERVICE_URL=http://100.76.65.1:8877
     depends_on:
       - redis
 

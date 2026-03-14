@@ -4,9 +4,13 @@ import { getJob } from "../api/jobs";
 import { getModel } from "../api/models";
 import { ModelViewer } from "../components/viewer/ModelViewer";
 import { SplitViewer } from "../components/viewer/SplitViewer";
-import { getModelUrl } from "../api/client";
+import { getModelUrl, api } from "../api/client";
 import type { Job } from "../types/job";
 import type { Model3D } from "../types/model";
+
+function artifactUrl(jobId: string, type: string, filename: string) {
+  return `${api.defaults.baseURL}/api/jobs/${jobId}/artifacts/${type}/${filename}`;
+}
 
 export function JobDetailPage() {
   const { jobId } = useParams<{ jobId: string }>();
@@ -41,6 +45,13 @@ export function JobDetailPage() {
       : job.status === "running"
       ? "#4a9eff"
       : "#888";
+
+  // Extract image filenames from artifact paths
+  const renderedViews = (job.intermediate_artifacts.rendered_views as string[] | undefined) || [];
+  const styledViews = (job.intermediate_artifacts.styled_views as string[] | undefined) || [];
+
+  const renderFilenames = renderedViews.map((p) => p.split("/").pop() || "");
+  const styledFilenames = styledViews.map((p) => p.split("/").pop() || "");
 
   return (
     <div>
@@ -173,24 +184,128 @@ export function JobDetailPage() {
         </div>
       )}
 
-      {/* Intermediate artifacts */}
-      {Object.keys(job.intermediate_artifacts).length > 0 && (
-        <div>
+      {/* Rendered views */}
+      {renderFilenames.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
           <h3 style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
-            Intermediate Results
+            Rendered Views ({renderFilenames.length})
           </h3>
           <div
             style={{
-              background: "#111",
-              border: "1px solid #222",
-              borderRadius: 8,
-              padding: 12,
-              fontSize: 12,
-              fontFamily: "monospace",
-              color: "#aaa",
+              display: "grid",
+              gridTemplateColumns: `repeat(${Math.min(renderFilenames.length, 4)}, 1fr)`,
+              gap: 8,
             }}
           >
-            <pre>{JSON.stringify(job.intermediate_artifacts, null, 2)}</pre>
+            {renderFilenames.map((fname, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#111",
+                  border: "1px solid #222",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={artifactUrl(job.id, "renders", fname)}
+                  alt={`View ${i}`}
+                  style={{ width: "100%", display: "block" }}
+                />
+                <div style={{ padding: 6, fontSize: 11, color: "#666", textAlign: "center" }}>
+                  View {i}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Styled views */}
+      {styledFilenames.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <h3 style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
+            Styled Views — Google Imagen ({styledFilenames.length})
+          </h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${Math.min(styledFilenames.length, 4)}, 1fr)`,
+              gap: 8,
+            }}
+          >
+            {styledFilenames.map((fname, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#111",
+                  border: "1px solid #222",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={artifactUrl(job.id, "styled", fname)}
+                  alt={`Styled ${i}`}
+                  style={{ width: "100%", display: "block" }}
+                />
+                <div style={{ padding: 6, fontSize: 11, color: "#666", textAlign: "center" }}>
+                  Styled {i}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Side-by-side render vs styled */}
+      {renderFilenames.length > 0 && styledFilenames.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <h3 style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
+            Before / After Comparison
+          </h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${Math.min(renderFilenames.length, 4)}, 1fr)`,
+              gap: 8,
+            }}
+          >
+            {renderFilenames.map((fname, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#111",
+                  border: "1px solid #222",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+              >
+                <div style={{ display: "flex" }}>
+                  <img
+                    src={artifactUrl(job.id, "renders", fname)}
+                    alt={`Original ${i}`}
+                    style={{ width: "50%", display: "block" }}
+                  />
+                  <img
+                    src={artifactUrl(job.id, "styled", styledFilenames[i])}
+                    alt={`Styled ${i}`}
+                    style={{ width: "50%", display: "block" }}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: 10,
+                    color: "#666",
+                    textAlign: "center",
+                  }}
+                >
+                  <div style={{ flex: 1, padding: 4 }}>Original</div>
+                  <div style={{ flex: 1, padding: 4 }}>Styled</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
