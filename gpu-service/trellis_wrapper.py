@@ -11,17 +11,16 @@ logger = logging.getLogger(__name__)
 
 _pipeline = None
 
+sys.path.insert(0, "/opt/TRELLIS.2")
+
 
 def load_trellis_model():
-    """Load TRELLIS.2 pipeline."""
     global _pipeline
     if _pipeline is not None:
         return _pipeline
 
     logger.info("Loading TRELLIS.2 model...")
-
-    sys.path.insert(0, "/opt/TRELLIS.2")
-    from trellis.pipelines import TrellisImageTo3DPipeline
+    from trellis2.pipelines import TrellisImageTo3DPipeline
 
     _pipeline = TrellisImageTo3DPipeline.from_pretrained("microsoft/TRELLIS.2-4B")
     _pipeline.cuda()
@@ -31,16 +30,13 @@ def load_trellis_model():
 
 
 def run_trellis_inference(input_path: Path, output_dir: Path) -> Path:
-    """Run TRELLIS.2 on a single image, returns path to output GLB."""
     pipeline = load_trellis_model()
 
     image = Image.open(input_path).convert("RGB")
     logger.info(f"TRELLIS input: {image.size}")
 
-    # Run pipeline
     outputs = pipeline.run(image, seed=42)
 
-    # Export as GLB (TRELLIS outputs Gaussian splats + mesh)
     output_path = output_dir / "reconstructed.glb"
     pipeline.to_glb(outputs, output_path)
 
