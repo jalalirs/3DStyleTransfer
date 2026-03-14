@@ -175,6 +175,22 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Frontend
+node_modules/
+frontend/dist/
+
+# Storage (runtime)
+storage/uploads/
+storage/jobs/
+storage/thumbnails/
+
+# Database
+*.db
+
+# Large downloaded models (re-download with scripts/download_sketchfab.py)
+assets/models/sketchfab/
+*.blend
+
 # Abstra
 # Abstra is an AI-powered process automation framework.
 # Ignore directories containing user credentials, local state, and settings.

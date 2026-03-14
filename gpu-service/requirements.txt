@@ -1,0 +1,15 @@
+torch>=2.1.0
+torchvision>=0.16.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+trimesh>=4.4.0
+numpy>=1.26.0
+Pillow>=10.0.0
+transformers>=4.36.0
+accelerate>=0.25.0
+einops>=0.7.0
+omegaconf>=2.3.0
+huggingface-hub>=0.20.0
+rembg>=2.0.50
+pygltflib>=1.16.0

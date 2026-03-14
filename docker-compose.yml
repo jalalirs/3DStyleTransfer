@@ -1,0 +1,50 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "8111:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - ./assets:/data/assets
+      - storage_data:/data/storage
+      # Mount GCP service account credentials from areen project
+      - /Users/jalalirs/code/areen/areen/workers/radio/gcp-tts-key.json:/app/gcp-credentials.json:ro
+    environment:
+      - DOCKER_ENV=1
+      - PROJECT_ROOT=/data
+      - ASSETS_DIR=/data/assets/models
+      - STORAGE_DIR=/data/storage
+      - DATABASE_URL=sqlite+aiosqlite:///./style_transfer.db
+      - REDIS_URL=redis://redis:6379/0
+      # Google Cloud (Imagen)
+      - GCP_CREDENTIALS_PATH=/app/gcp-credentials.json
+      - GCP_PROJECT_ID=m3ajem
+      - GCP_LOCATION=us-central1
+      # GPU reconstruction service (Tailscale IP of your GPU machine)
+      - GPU_SERVICE_URL=${GPU_SERVICE_URL:-}
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+      args:
+        VITE_API_URL: "USE_PROXY"
+    ports:
+      - "8112:80"
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "8113:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  storage_data:
+  redis_data:

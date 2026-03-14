@@ -1,0 +1,19 @@
+services:
+  reconstruction:
+    build: .
+    ports:
+      - "8877:8877"
+    volumes:
+      - model_cache:/root/.cache/huggingface
+    environment:
+      - PRELOAD_MODELS=0  # Set to 1 to preload on startup (uses more VRAM)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  model_cache:
