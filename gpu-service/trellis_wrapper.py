@@ -20,9 +20,9 @@ def load_trellis_model():
         return _pipeline
 
     logger.info("Loading TRELLIS.2 model...")
-    from trellis2.pipelines import TrellisImageTo3DPipeline
+    from trellis2.pipelines import Trellis2ImageTo3DPipeline
 
-    _pipeline = TrellisImageTo3DPipeline.from_pretrained("microsoft/TRELLIS.2-4B")
+    _pipeline = Trellis2ImageTo3DPipeline.from_pretrained("microsoft/TRELLIS.2-4B")
     _pipeline.cuda()
 
     logger.info("TRELLIS.2 loaded on CUDA")
