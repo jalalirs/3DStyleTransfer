@@ -56,9 +56,11 @@ def run_triposr_inference(model, input_path: Path, output_dir: Path) -> Path:
         scene_codes = model([image], device=device)
 
     # Extract mesh
-    try:
-        meshes = model.extract_mesh(scene_codes, resolution=256, has_vertex_color=True)
-    except TypeError:
+    import inspect
+    sig = inspect.signature(model.extract_mesh)
+    if 'has_vertex_color' in sig.parameters:
+        meshes = model.extract_mesh(scene_codes, has_vertex_color=True, resolution=256)
+    else:
         meshes = model.extract_mesh(scene_codes, resolution=256)
     mesh = meshes[0]
 

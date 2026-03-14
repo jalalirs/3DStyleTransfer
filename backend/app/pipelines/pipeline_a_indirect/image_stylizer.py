@@ -1,4 +1,4 @@
-"""Image stylization via Google Imagen 3 (Vertex AI)."""
+"""Image stylization via Google Gemini image generation (img2img)."""
 
 import base64
 import json
@@ -18,7 +18,7 @@ async def stylize_images(
     output_dir: Path,
     progress_callback: Callable[[float], Awaitable[None]] | None = None,
 ) -> list[Path]:
-    """Stylize a list of rendered images using Google Imagen.
+    """Stylize rendered images using Gemini image-to-image generation.
 
     Returns list of paths to styled images.
     """
@@ -27,7 +27,7 @@ async def stylize_images(
     styled_paths = []
     for i, img_path in enumerate(input_images):
         output_path = output_dir / f"styled_{i:03d}.png"
-        await _stylize_google_imagen(
+        await _stylize_gemini(
             input_path=img_path,
             output_path=output_path,
             prompt=prompt,
@@ -65,18 +65,17 @@ def _get_google_access_token() -> str:
     return credentials.token
 
 
-async def _stylize_google_imagen(
+async def _stylize_gemini(
     input_path: Path,
     output_path: Path,
     prompt: str,
     negative_prompt: str,
     strength: float,
 ) -> None:
-    """Use Google Imagen 3 via Vertex AI for image stylization.
+    """Use Gemini Flash Image model for true image-to-image style transfer.
 
-    Strategy:
-    1. Try Imagen 3 edit mode (BGSWAP) with the input as a reference image
-    2. If that fails, use Imagen 3 generation with a detailed prompt
+    Sends the input render + style prompt, gets back a transformed image
+    that preserves the structure but applies the requested style.
     """
     access_token = _get_google_access_token()
     project_id = settings.gcp_project_id
@@ -85,75 +84,78 @@ async def _stylize_google_imagen(
     with open(input_path, "rb") as f:
         img_b64 = base64.b64encode(f.read()).decode()
 
+    model_name = "gemini-2.5-flash-image"
+
+    style_prompt = (
+        f"Transform this 3D rendered architectural element by applying this style: {prompt}. "
+        f"Keep the exact same shape, structure, viewpoint and proportions of the object. "
+        f"Only change the surface appearance, materials and textures. "
+        f"The object should remain centered and the same size in the image. "
+        f"Do not change the camera angle or add any new objects. "
+        f"Avoid: {negative_prompt}."
+    )
+
+    url = (
+        f"https://{location}-aiplatform.googleapis.com/v1/"
+        f"projects/{project_id}/locations/{location}/publishers/google/"
+        f"models/{model_name}:generateContent"
+    )
+
+    payload = {
+        "contents": [{
+            "role": "user",
+            "parts": [
+                {
+                    "inlineData": {
+                        "mimeType": "image/png",
+                        "data": img_b64,
+                    }
+                },
+                {
+                    "text": style_prompt,
+                },
+            ],
+        }],
+        "generationConfig": {
+            "responseModalities": ["IMAGE", "TEXT"],
+            "temperature": 0.4 + (strength * 0.6),
+        },
+    }
+
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
 
+    # Retry with backoff for rate limiting
+    import asyncio
+    max_retries = 5
     async with httpx.AsyncClient(timeout=120) as client:
-        # Approach 1: Edit mode with reference image
-        edit_url = (
-            f"https://{location}-aiplatform.googleapis.com/v1/"
-            f"projects/{project_id}/locations/{location}/publishers/google/"
-            f"models/imagen-3.0-capability-001:predict"
-        )
+        for attempt in range(max_retries):
+            resp = await client.post(url, headers=headers, json=payload)
 
-        edit_payload = {
-            "instances": [{
-                "prompt": prompt,
-                "referenceImages": [{
-                    "referenceType": "REFERENCE_TYPE_RAW",
-                    "referenceId": 1,
-                    "referenceImage": {"bytesBase64Encoded": img_b64},
-                }],
-            }],
-            "parameters": {
-                "sampleCount": 1,
-                "editConfig": {"editMode": "EDIT_MODE_BGSWAP"},
-                "negativePrompt": negative_prompt,
-            },
-        }
+            if resp.status_code == 429:
+                wait = 10 * (attempt + 1)
+                print(f"Rate limited, waiting {wait}s (attempt {attempt + 1}/{max_retries})")
+                await asyncio.sleep(wait)
+                continue
 
-        resp = await client.post(edit_url, headers=headers, json=edit_payload)
+            if resp.status_code != 200:
+                raise RuntimeError(f"Gemini failed ({resp.status_code}): {resp.text[:300]}")
 
-        if resp.status_code == 200:
             result = resp.json()
-            predictions = result.get("predictions", [])
-            if predictions and predictions[0].get("bytesBase64Encoded"):
-                img_bytes = base64.b64decode(predictions[0]["bytesBase64Encoded"])
-                with open(output_path, "wb") as f:
-                    f.write(img_bytes)
-                return
+            candidates = result.get("candidates", [])
+            if not candidates:
+                raise RuntimeError(f"Gemini returned no candidates: {result}")
 
-        # Approach 2: Pure generation with descriptive prompt
-        gen_url = (
-            f"https://{location}-aiplatform.googleapis.com/v1/"
-            f"projects/{project_id}/locations/{location}/publishers/google/"
-            f"models/imagen-3.0-generate-001:predict"
-        )
+            # Find image part in response
+            for part in candidates[0].get("content", {}).get("parts", []):
+                if "inlineData" in part:
+                    img_bytes = base64.b64decode(part["inlineData"]["data"])
+                    with open(output_path, "wb") as f:
+                        f.write(img_bytes)
+                    return
 
-        gen_payload = {
-            "instances": [{
-                "prompt": (
-                    f"{prompt}, 3D rendered architectural element, "
-                    f"studio lighting, clean background, high detail"
-                ),
-            }],
-            "parameters": {
-                "sampleCount": 1,
-                "aspectRatio": "1:1",
-                "negativePrompt": negative_prompt,
-            },
-        }
+            raise RuntimeError("Gemini response contained no image output")
 
-        resp = await client.post(gen_url, headers=headers, json=gen_payload)
-        resp.raise_for_status()
-
-        result = resp.json()
-        predictions = result.get("predictions", [])
-        if not predictions or not predictions[0].get("bytesBase64Encoded"):
-            raise RuntimeError(f"Imagen returned no image: {result}")
-
-        img_bytes = base64.b64decode(predictions[0]["bytesBase64Encoded"])
-        with open(output_path, "wb") as f:
-            f.write(img_bytes)
+    raise RuntimeError("Gemini rate limited after all retries")
