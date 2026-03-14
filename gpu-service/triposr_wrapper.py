@@ -56,7 +56,10 @@ def run_triposr_inference(model, input_path: Path, output_dir: Path) -> Path:
         scene_codes = model([image], device=device)
 
     # Extract mesh
-    meshes = model.extract_mesh(scene_codes, resolution=256)
+    try:
+        meshes = model.extract_mesh(scene_codes, resolution=256, has_vertex_color=True)
+    except TypeError:
+        meshes = model.extract_mesh(scene_codes, resolution=256)
     mesh = meshes[0]
 
     # Export as OBJ
