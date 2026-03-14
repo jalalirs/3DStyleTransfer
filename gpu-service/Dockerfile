@@ -24,10 +24,9 @@ RUN pip install --no-cache-dir \
 RUN pip install --no-cache-dir xformers==0.0.28.post3 --index-url https://download.pytorch.org/whl/cu124 || true
 RUN pip install --no-cache-dir flash-attn --no-build-isolation || true
 
-# Common deps (won't touch torch)
+# Common deps — torch is already pinned above so pip won't replace it
 COPY requirements.txt .
-RUN pip install --no-cache-dir --no-deps -r requirements.txt || \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # torchmcubes (for TripoSR)
 RUN pip install --no-cache-dir git+https://github.com/tatsy/torchmcubes.git
