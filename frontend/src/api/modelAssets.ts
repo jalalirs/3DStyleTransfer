@@ -80,10 +80,12 @@ export const styledImageUrl = (modelId: string, styledId: string) =>
 export const listReconstructions = async (modelId: string) =>
   (await api.get<ReconstructionItem[]>(`${base(modelId)}/reconstructions`)).data;
 
-export const createReconstruction = async (modelId: string, styledImageId: string, method = "triposr") =>
+export const createReconstruction = async (modelId: string, styledImageId: string, method = "trellis") =>
   (await api.post<ReconstructionItem>(`${base(modelId)}/reconstructions`, {
     styled_image_id: styledImageId, method,
-  }, { timeout: 300000 })).data;
+  }, { timeout: 600000 })).data;
 
-export const reconstructionUrl = (modelId: string, reconId: string) =>
-  `${api.defaults.baseURL}${base(modelId)}/reconstructions/${reconId}/model.obj`;
+export const reconstructionUrl = (modelId: string, reconId: string, method?: string) => {
+  const ext = method && (method === "trellis" || method === "hunyuan3d") ? "glb" : "obj";
+  return `${api.defaults.baseURL}${base(modelId)}/reconstructions/${reconId}/model.${ext}`;
+};

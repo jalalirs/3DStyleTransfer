@@ -14,7 +14,8 @@ async def reconstruct_3d(
 ) -> Path:
     """Send the best styled image to the GPU reconstruction service.
 
-    Returns path to output OBJ file.
+    Methods: trellis, hunyuan3d, triposr
+    Returns path to output 3D file (GLB or OBJ).
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -25,8 +26,6 @@ async def reconstruct_3d(
             "and set the Tailscale URL in docker-compose.yml"
         )
 
-    # Use the front-facing view (first image) for best reconstruction
-    # Convert to RGB PNG (TripoSR expects 3-channel)
     from PIL import Image
     import io
 
@@ -36,18 +35,13 @@ async def reconstruct_3d(
     img.save(img_buffer, format="PNG")
     img_bytes = img_buffer.getvalue()
 
-    async with httpx.AsyncClient(timeout=300) as client:
-        # Check GPU service health
+    async with httpx.AsyncClient(timeout=600) as client:
         try:
             health = await client.get(f"{gpu_url}/health")
             health.raise_for_status()
         except Exception as e:
-            raise RuntimeError(
-                f"GPU service not reachable at {gpu_url}: {e}. "
-                f"Make sure the gpu-service is running on your GPU machine."
-            )
+            raise RuntimeError(f"GPU service not reachable at {gpu_url}: {e}")
 
-        # Send image for reconstruction
         resp = await client.post(
             f"{gpu_url}/reconstruct",
             files={"image": ("styled.png", img_bytes, "image/png")},
@@ -57,8 +51,14 @@ async def reconstruct_3d(
         if resp.status_code != 200:
             raise RuntimeError(f"GPU reconstruction failed ({resp.status_code}): {resp.text}")
 
-        # Save the returned OBJ file
-        output_path = output_dir / "reconstructed.obj"
+        # Determine output extension from response
+        content_disp = resp.headers.get("content-disposition", "")
+        if ".glb" in content_disp or method in ("trellis", "hunyuan3d"):
+            ext = ".glb"
+        else:
+            ext = ".obj"
+
+        output_path = output_dir / f"reconstructed{ext}"
         with open(output_path, "wb") as f:
             f.write(resp.content)
 

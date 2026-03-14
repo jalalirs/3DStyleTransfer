@@ -210,7 +210,7 @@ async def delete_styled(model_id: str, styled_id: str, session: AsyncSession = D
 
 class ReconstructRequest(BaseModel):
     styled_image_id: str
-    method: str = "triposr"
+    method: str = "trellis"  # trellis, hunyuan3d, triposr
 
 
 @router.get("/reconstructions")
@@ -237,7 +237,6 @@ async def create_reconstruction(
     recon_id = str(uuid.uuid4())
     recon_dir = _model_dir(model_id) / "reconstructions"
     recon_dir.mkdir(exist_ok=True)
-    output_path = recon_dir / f"{recon_id}.obj"
 
     from app.pipelines.pipeline_a_indirect.reconstructor import reconstruct_3d
 
@@ -247,6 +246,9 @@ async def create_reconstruction(
             method=req.method,
             output_dir=recon_dir,
         )
+        # Rename to our ID-based name, keeping the extension
+        ext = result_path.suffix  # .obj or .glb
+        output_path = recon_dir / f"{recon_id}{ext}"
         if result_path.exists() and result_path != output_path:
             result_path.rename(output_path)
     except Exception as e:
@@ -267,8 +269,21 @@ async def create_reconstruction(
 
 
 @router.get("/reconstructions/{recon_id}/model.obj")
-async def get_reconstruction_file(model_id: str, recon_id: str):
-    filepath = settings.storage_dir / "model_assets" / model_id / "reconstructions" / f"{recon_id}.obj"
-    if not filepath.exists():
-        raise HTTPException(404, "Reconstruction not found")
-    return FileResponse(filepath, media_type="application/octet-stream", filename="model.obj")
+async def get_reconstruction_obj(model_id: str, recon_id: str):
+    return _serve_reconstruction(model_id, recon_id)
+
+
+@router.get("/reconstructions/{recon_id}/model.glb")
+async def get_reconstruction_glb(model_id: str, recon_id: str):
+    return _serve_reconstruction(model_id, recon_id)
+
+
+def _serve_reconstruction(model_id: str, recon_id: str):
+    recon_dir = settings.storage_dir / "model_assets" / model_id / "reconstructions"
+    # Try both extensions
+    for ext in [".glb", ".obj"]:
+        filepath = recon_dir / f"{recon_id}{ext}"
+        if filepath.exists():
+            media = "model/gltf-binary" if ext == ".glb" else "application/octet-stream"
+            return FileResponse(filepath, media_type=media, filename=f"model{ext}")
+    raise HTTPException(404, "Reconstruction not found")

@@ -95,12 +95,12 @@ export function ModelDetailPage() {
     setStyling(false);
   }
 
-  async function handleReconstruct(styledId: string) {
+  async function handleReconstruct(styledId: string, method: string) {
     if (!modelId) return;
-    setReconstructing(styledId);
+    setReconstructing(styledId + "_" + method);
     setError("");
     try {
-      await createReconstruction(modelId, styledId);
+      await createReconstruction(modelId, styledId, method);
       setRecons(await listReconstructions(modelId));
     } catch (e: any) {
       setError(e?.response?.data?.detail || String(e));
@@ -264,7 +264,6 @@ export function ModelDetailPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {styled.map((s) => {
               const sourceView = views.find((v) => v.id === s.view_id);
-              const hasRecon = recons.some((r) => r.styled_image_id === s.id);
               return (
                 <div key={s.id} style={{ background: "#111", borderRadius: 8, overflow: "hidden", border: "1px solid #222" }}>
                   {/* Before/After side by side, full width */}
@@ -284,23 +283,29 @@ export function ModelDetailPage() {
                     <div style={{ flex: 1, fontSize: 12, color: "#888", lineHeight: 1.4 }}>
                       {s.prompt}
                     </div>
-                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                      {!hasRecon && (
-                        <button
-                          onClick={() => handleReconstruct(s.id)}
-                          disabled={reconstructing === s.id}
-                          style={{
-                            padding: "6px 16px", fontSize: 12, borderRadius: 6, cursor: "pointer",
-                            background: reconstructing === s.id ? "#333" : "#4a9eff",
-                            border: "none", color: "#fff",
-                          }}
-                        >
-                          {reconstructing === s.id ? "Generating 3D..." : "Generate 3D"}
-                        </button>
-                      )}
-                      {hasRecon && (
-                        <span style={{ fontSize: 12, color: "#5cb85c", padding: "6px 0" }}>3D generated</span>
-                      )}
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" }}>
+                      {["trellis", "hunyuan3d", "triposr"].map((m) => {
+                        const existing = recons.find((r) => r.styled_image_id === s.id && r.method === m);
+                        const isRunning = reconstructing === s.id + "_" + m;
+                        return existing ? (
+                          <span key={m} style={{ fontSize: 11, color: "#5cb85c", padding: "4px 8px", background: "#1a2a1a", borderRadius: 4 }}>
+                            {m}
+                          </span>
+                        ) : (
+                          <button
+                            key={m}
+                            onClick={() => handleReconstruct(s.id, m)}
+                            disabled={!!reconstructing}
+                            style={{
+                              padding: "4px 10px", fontSize: 11, borderRadius: 4, cursor: isRunning ? "wait" : "pointer",
+                              background: isRunning ? "#333" : "#1a1a2e",
+                              border: "1px solid #4a9eff", color: "#4a9eff",
+                            }}
+                          >
+                            {isRunning ? `${m}...` : m}
+                          </button>
+                        );
+                      })}
                       <button
                         onClick={() => handleDeleteStyled(s.id)}
                         style={{ padding: "6px 12px", fontSize: 12, borderRadius: 6, cursor: "pointer", background: "none", border: "1px solid #333", color: "#666" }}
@@ -327,11 +332,14 @@ export function ModelDetailPage() {
               const sourceStyled = styled.find((s) => s.id === r.styled_image_id);
               return (
                 <div key={r.id} style={{ background: "#111", borderRadius: 8, overflow: "hidden", border: "1px solid #222" }}>
-                  <div style={{ height: 300 }}>
-                    <ModelViewer url={reconstructionUrl(modelId, r.id)} />
+                  <div style={{ padding: "6px 10px", fontSize: 12, color: "#4a9eff", background: "#0a0a0a", fontWeight: 600 }}>
+                    {r.method.toUpperCase()}
+                  </div>
+                  <div style={{ height: 350 }}>
+                    <ModelViewer url={reconstructionUrl(modelId, r.id, r.method)} />
                   </div>
                   {sourceStyled && (
-                    <div style={{ padding: 8, display: "flex", gap: 8, alignItems: "center" }}>
+                    <div style={{ padding: 10, display: "flex", gap: 8, alignItems: "center" }}>
                       <img src={styledImageUrl(modelId, sourceStyled.id)} alt="" style={{ width: 50, height: 50, borderRadius: 4, objectFit: "cover" }} />
                       <div style={{ fontSize: 11, color: "#888", flex: 1 }}>
                         {sourceStyled.prompt.length > 60 ? sourceStyled.prompt.slice(0, 60) + "..." : sourceStyled.prompt}
