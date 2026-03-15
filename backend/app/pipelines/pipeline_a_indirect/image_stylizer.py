@@ -156,6 +156,9 @@ async def _stylize_gemini(
                         f.write(img_bytes)
                     return
 
-            raise RuntimeError("Gemini response contained no image output")
+            # No image in response — retry (Gemini sometimes returns text-only)
+            print(f"No image in response, retrying (attempt {attempt + 1}/{max_retries})")
+            await asyncio.sleep(5)
+            continue
 
-    raise RuntimeError("Gemini rate limited after all retries")
+    raise RuntimeError("Gemini failed to generate an image after all retries")
