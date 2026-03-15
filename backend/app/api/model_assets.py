@@ -19,26 +19,26 @@ PROMPT_TEMPLATES = [
     {
         "id": "ottoman",
         "name": "Ottoman Iznik",
-        "prompt": "Ottoman blue Iznik ceramic tiles with intricate gold arabesque patterns and calligraphy",
-        "negative_prompt": "blurry, low quality, distorted, modern, plastic",
+        "prompt": "Transform this plain architectural element into Ottoman Islamic style with blue Iznik ceramic tile cladding, intricate gold arabesque relief carvings, muqarnas honeycomb detailing at transitions, and Arabic calligraphy bands. Add geometric star pattern cutouts and ornamental moldings.",
+        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
     },
     {
         "id": "alhambra",
         "name": "Alhambra Moorish",
-        "prompt": "Alhambra Moorish carved red and gold stucco with intricate geometric star patterns and muqarnas detailing",
-        "negative_prompt": "blurry, low quality, distorted, modern, plastic",
+        "prompt": "Transform this plain architectural element into Alhambra Moorish Islamic style with carved red and gold stucco, intricate geometric star and polygon tessellation patterns covering all surfaces, horseshoe arch profiles, muqarnas stalactite vaulting at the top, and delicate arabesque vine scroll borders.",
+        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
     },
     {
         "id": "persian",
-        "name": "Persian Mosaic",
-        "prompt": "Persian turquoise and cobalt blue mosaic tilework with floral arabesque patterns and geometric borders",
-        "negative_prompt": "blurry, low quality, distorted, modern, plastic",
+        "name": "Persian Safavid",
+        "prompt": "Transform this plain architectural element into Persian Safavid Islamic style with turquoise and cobalt blue mosaic tilework covering all surfaces, floral arabesque patterns with curved vine motifs, geometric border bands, pointed arch niches carved into the surface, and gold-highlighted muqarnas crown details.",
+        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
     },
     {
         "id": "mughal",
-        "name": "Mughal Marble",
-        "prompt": "Mughal white marble with pietra dura floral inlay in semi-precious stones, lapis lazuli and carnelian details",
-        "negative_prompt": "blurry, low quality, distorted, modern, plastic",
+        "name": "Mughal Indian",
+        "prompt": "Transform this plain architectural element into Mughal Islamic style with white marble surfaces, pietra dura floral inlay patterns in semi-precious stones, carved jali lattice screen cutouts with geometric patterns, cusped arch profiles, and lotus and palmette relief carvings with lapis lazuli and carnelian colored accents.",
+        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
     },
 ]
 
