@@ -45,7 +45,6 @@ async def reconstruct_3d(
         resp = await client.post(
             f"{gpu_url}/reconstruct",
             files={"image": ("styled.png", img_bytes, "image/png")},
-            data={"method": method},
         )
 
         if resp.status_code != 200:
