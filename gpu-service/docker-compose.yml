@@ -1,12 +1,12 @@
 services:
-  reconstruction:
+  trellis:
     build: .
     ports:
       - "8877:8877"
     volumes:
       - model_cache:/root/.cache/huggingface
     environment:
-      - PRELOAD_MODELS=0  # Set to 1 to preload on startup (uses more VRAM)
+      - HF_TOKEN=${HF_TOKEN}
     deploy:
       resources:
         reservations:

@@ -1,6 +1,5 @@
 """TRELLIS.2 wrapper — high-quality image to 3D mesh."""
 
-import sys
 import logging
 from pathlib import Path
 
@@ -10,8 +9,6 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 _pipeline = None
-
-sys.path.insert(0, "/opt/TRELLIS.2")
 
 
 def load_trellis_model():
@@ -36,9 +33,28 @@ def run_trellis_inference(input_path: Path, output_dir: Path) -> Path:
     logger.info(f"TRELLIS input: {image.size}")
 
     outputs = pipeline.run(image, seed=42)
+    mesh = outputs[0]
+    mesh.simplify(16777216)
+
+    import o_voxel
+    glb = o_voxel.postprocess.to_glb(
+        vertices=mesh.vertices,
+        faces=mesh.faces,
+        attr_volume=mesh.attrs,
+        coords=mesh.coords,
+        attr_layout=mesh.layout,
+        voxel_size=mesh.voxel_size,
+        aabb=[[-0.5, -0.5, -0.5], [0.5, 0.5, 0.5]],
+        decimation_target=1000000,
+        texture_size=4096,
+        remesh=True,
+        remesh_band=1,
+        remesh_project=0,
+        verbose=True,
+    )
 
     output_path = output_dir / "reconstructed.glb"
-    pipeline.to_glb(outputs, output_path)
+    glb.export(str(output_path), extension_webp=True)
 
     logger.info(f"TRELLIS output: {output_path} ({output_path.stat().st_size} bytes)")
     return output_path
