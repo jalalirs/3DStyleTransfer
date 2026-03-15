@@ -18,27 +18,27 @@ router = APIRouter(prefix="/api/models/{model_id}", tags=["model-assets"])
 PROMPT_TEMPLATES = [
     {
         "id": "ottoman",
-        "name": "Ottoman Iznik",
-        "prompt": "Transform this plain architectural element into Ottoman Islamic style with blue Iznik ceramic tile cladding, intricate gold arabesque relief carvings, muqarnas honeycomb detailing at transitions, and Arabic calligraphy bands. Add geometric star pattern cutouts and ornamental moldings.",
-        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
+        "name": "Ottoman",
+        "prompt": "Redesign this as an Ottoman Islamic architectural element. Replace smooth surfaces with muqarnas honeycomb stalactite carvings. Add deep geometric star pattern cutouts and recessed niches with pointed arches. Cover surfaces with Iznik blue and gold ceramic tilework. Add calligraphy bands and arabesque relief carving into the stone.",
+        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
     },
     {
         "id": "alhambra",
         "name": "Alhambra Moorish",
-        "prompt": "Transform this plain architectural element into Alhambra Moorish Islamic style with carved red and gold stucco, intricate geometric star and polygon tessellation patterns covering all surfaces, horseshoe arch profiles, muqarnas stalactite vaulting at the top, and delicate arabesque vine scroll borders.",
-        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
+        "prompt": "Redesign this as a Moorish Islamic architectural element from the Alhambra palace. Carve every surface with intricate interlocking geometric star and polygon tessellation. Add horseshoe arch niches cut into the form. Crown the top with muqarnas stalactite vaulting. Use carved red and gold stucco with sebka diamond lattice patterns.",
+        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
     },
     {
         "id": "persian",
         "name": "Persian Safavid",
-        "prompt": "Transform this plain architectural element into Persian Safavid Islamic style with turquoise and cobalt blue mosaic tilework covering all surfaces, floral arabesque patterns with curved vine motifs, geometric border bands, pointed arch niches carved into the surface, and gold-highlighted muqarnas crown details.",
-        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
+        "prompt": "Redesign this as a Persian Safavid Islamic architectural element. Reshape the form with bulbous profiles and pointed arch recesses carved into the surface. Cover with turquoise and cobalt blue mosaic tilework in geometric and floral patterns. Add muqarnas cascading tiers at transitions. Incorporate carved arabesque vine scrolls with gold leaf accents.",
+        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
     },
     {
         "id": "mughal",
-        "name": "Mughal Indian",
-        "prompt": "Transform this plain architectural element into Mughal Islamic style with white marble surfaces, pietra dura floral inlay patterns in semi-precious stones, carved jali lattice screen cutouts with geometric patterns, cusped arch profiles, and lotus and palmette relief carvings with lapis lazuli and carnelian colored accents.",
-        "negative_prompt": "blurry, low quality, distorted, plain, undecorated, modern minimalist",
+        "name": "Mughal",
+        "prompt": "Redesign this as a Mughal Islamic architectural element. Reshape with cusped arch profiles and scalloped edges. Carve jali lattice screen patterns as geometric cutouts through the surface. Add white marble with pietra dura floral inlay in semi-precious stone colors. Include lotus petal base moldings and chattri dome finials.",
+        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
     },
 ]
 

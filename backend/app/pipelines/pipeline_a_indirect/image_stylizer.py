@@ -87,11 +87,12 @@ async def _stylize_gemini(
     model_name = "gemini-2.5-flash-image"
 
     style_prompt = (
-        f"Transform this 3D rendered architectural element by applying this style: {prompt}. "
-        f"Keep the exact same shape, structure, viewpoint and proportions of the object. "
-        f"Only change the surface appearance, materials and textures. "
-        f"The object should remain centered and the same size in the image. "
-        f"Do not change the camera angle or add any new objects. "
+        f"{prompt} "
+        f"Redesign this architectural element completely in this style. "
+        f"Change the geometry, add carved details, cutouts, and ornamental features. "
+        f"Keep the same general function (column stays a column, arch stays an arch) "
+        f"and same viewpoint, but completely redesign the form and details. "
+        f"Render as a photorealistic architectural element against a clean white background. "
         f"Avoid: {negative_prompt}."
     )
 
