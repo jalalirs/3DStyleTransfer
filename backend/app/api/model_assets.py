@@ -17,28 +17,28 @@ router = APIRouter(prefix="/api/models/{model_id}", tags=["model-assets"])
 
 PROMPT_TEMPLATES = [
     {
-        "id": "ottoman",
-        "name": "Ottoman",
-        "prompt": "Redesign this as an Ottoman Islamic architectural element. Replace smooth surfaces with muqarnas honeycomb stalactite carvings. Add deep geometric star pattern cutouts and recessed niches with pointed arches. Cover surfaces with Iznik blue and gold ceramic tilework. Add calligraphy bands and arabesque relief carving into the stone.",
-        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
+        "id": "column",
+        "name": "Apply to Column",
+        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic architectural column that incorporates these geometric patterns, carvings, and ornamental features into its structure. The column should have a capital, shaft, and base, all shaped and carved using these Islamic design elements. Render against a clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
     },
     {
-        "id": "alhambra",
-        "name": "Alhambra Moorish",
-        "prompt": "Redesign this as a Moorish Islamic architectural element from the Alhambra palace. Carve every surface with intricate interlocking geometric star and polygon tessellation. Add horseshoe arch niches cut into the form. Crown the top with muqarnas stalactite vaulting. Use carved red and gold stucco with sebka diamond lattice patterns.",
-        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
+        "id": "arch",
+        "name": "Apply to Archway",
+        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic archway/doorway that incorporates these geometric patterns, carvings, and ornamental features into its structure. The arch should feature these Islamic design elements carved into the pillars, spandrels, and arch profile. Render against a clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
     },
     {
-        "id": "persian",
-        "name": "Persian Safavid",
-        "prompt": "Redesign this as a Persian Safavid Islamic architectural element. Reshape the form with bulbous profiles and pointed arch recesses carved into the surface. Cover with turquoise and cobalt blue mosaic tilework in geometric and floral patterns. Add muqarnas cascading tiers at transitions. Incorporate carved arabesque vine scrolls with gold leaf accents.",
-        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
+        "id": "facade",
+        "name": "Apply to Facade",
+        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic building facade panel that incorporates these geometric patterns, carvings, cutouts and ornamental features across its surface. Include windows with these Islamic design elements as lattice screens and decorative borders. Render against a clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
     },
     {
-        "id": "mughal",
-        "name": "Mughal",
-        "prompt": "Redesign this as a Mughal Islamic architectural element. Reshape with cusped arch profiles and scalloped edges. Carve jali lattice screen patterns as geometric cutouts through the surface. Add white marble with pietra dura floral inlay in semi-precious stone colors. Include lotus petal base moldings and chattri dome finials.",
-        "negative_prompt": "blurry, low quality, distorted, simple, smooth, plain, modern",
+        "id": "dome",
+        "name": "Apply to Dome",
+        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic dome structure that incorporates these geometric patterns, carvings, and ornamental features. The dome should have a drum base with arched windows, and the dome surface should feature these Islamic design elements as carved ribs, tilework, and muqarnas transitions. Render against a clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
     },
 ]
 
