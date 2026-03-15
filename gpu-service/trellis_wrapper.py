@@ -54,7 +54,7 @@ def run_trellis_inference(input_path: Path, output_dir: Path) -> Path:
     )
 
     output_path = output_dir / "reconstructed.glb"
-    glb.export(str(output_path), extension_webp=True)
+    glb.export(str(output_path), extension_webp=False)
 
     logger.info(f"TRELLIS output: {output_path} ({output_path.stat().st_size} bytes)")
     return output_path
