@@ -17,28 +17,34 @@ router = APIRouter(prefix="/api/models/{model_id}", tags=["model-assets"])
 
 PROMPT_TEMPLATES = [
     {
-        "id": "column",
-        "name": "Apply to Column",
-        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic architectural column that incorporates these geometric patterns, carvings, and ornamental features into its structure. The column should have a capital, shaft, and base, all shaped and carved using these Islamic design elements. Render against a clean white background.",
-        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
+        "id": "roman_column",
+        "name": "Roman-style Column",
+        "prompt": "Using this 3D design element as the repeating decorative motif, create a photorealistic tall Roman-style architectural column. The column should have a classical proportioned shaft, base, and capital — but instead of traditional Corinthian or Ionic details, the capital, shaft fluting, and base moldings should all be shaped using this geometric pattern as the primary design element. The pattern should wrap around and repeat across the column surface as carved relief and structural form. Photorealistic stone material, studio lighting, clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon, plain smooth surface",
     },
     {
         "id": "arch",
-        "name": "Apply to Archway",
-        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic archway/doorway that incorporates these geometric patterns, carvings, and ornamental features into its structure. The arch should feature these Islamic design elements carved into the pillars, spandrels, and arch profile. Render against a clean white background.",
-        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
+        "name": "Archway",
+        "prompt": "Using this 3D design element as the repeating decorative motif, create a photorealistic architectural archway with two supporting pillars. The arch profile, pillar surfaces, spandrels, and keystone should all be shaped and carved using this geometric pattern as the primary structural and ornamental element. The pattern should tile and repeat naturally across all surfaces. Photorealistic stone material, studio lighting, clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon, plain smooth surface",
     },
     {
         "id": "facade",
-        "name": "Apply to Facade",
-        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic building facade panel that incorporates these geometric patterns, carvings, cutouts and ornamental features across its surface. Include windows with these Islamic design elements as lattice screens and decorative borders. Render against a clean white background.",
-        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
+        "name": "Building Facade",
+        "prompt": "Using this 3D design element as the repeating decorative motif, create a photorealistic building facade section. The wall surface, window surrounds, cornices, and decorative bands should all incorporate this geometric pattern as carved relief, screen cutouts, and structural ornamentation repeating across the facade. Photorealistic stone material, studio lighting, clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon, plain smooth surface",
     },
     {
         "id": "dome",
-        "name": "Apply to Dome",
-        "prompt": "Using this Islamic architectural design as a style reference, create a photorealistic dome structure that incorporates these geometric patterns, carvings, and ornamental features. The dome should have a drum base with arched windows, and the dome surface should feature these Islamic design elements as carved ribs, tilework, and muqarnas transitions. Render against a clean white background.",
-        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon",
+        "name": "Dome",
+        "prompt": "Using this 3D design element as the repeating decorative motif, create a photorealistic dome structure on a cylindrical drum base. The dome ribs, drum surface, and transition zone should all be shaped using this geometric pattern as the primary design element, with the pattern radiating from the crown and repeating around the circumference. Photorealistic stone material, studio lighting, clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon, plain smooth surface",
+    },
+    {
+        "id": "balustrade",
+        "name": "Balustrade / Railing",
+        "prompt": "Using this 3D design element as the repeating decorative motif, create a photorealistic architectural balustrade or railing section. Each baluster and the rail panels should be shaped using this geometric pattern, with the motif repeating as carved openwork and structural form along the length. Photorealistic stone material, studio lighting, clean white background.",
+        "negative_prompt": "blurry, low quality, distorted, flat, 2D, cartoon, plain smooth surface",
     },
 ]
 
