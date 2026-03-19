@@ -5,8 +5,8 @@ import { OrbitControls, Environment, Center } from "@react-three/drei";
 import { ModelLoader } from "../components/viewer/ModelLoader";
 import { getStaticUrl } from "../api/client";
 import { getConfig, type ModelEntry, type MethodEntry } from "../api/config";
-import { runMeshUp, type MeshUpResult } from "../api/meshup";
-import { runImageStyleTransfer, type ImageStyleResult } from "../api/styleTransfer";
+import { runMeshUp } from "../api/meshup";
+import { runImageStyleTransfer } from "../api/styleTransfer";
 import { ModelViewer } from "../components/viewer/ModelViewer";
 
 type TargetType = "text" | "3d-render" | "3d-direct";
