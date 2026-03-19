@@ -74,18 +74,6 @@ function Spinner({ color = "#4a9eff" }: { color?: string }) {
   );
 }
 
-function StepBadge({ n, active }: { n: number; active: boolean }) {
-  return (
-    <div style={{
-      width: 30, height: 30, borderRadius: "50%",
-      background: active ? "#4a9eff" : "#222",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: 14, fontWeight: 700, color: "#fff", flexShrink: 0,
-    }}>
-      {n}
-    </div>
-  );
-}
 
 export function StyleTransferPage() {
   const { refId } = useParams<{ refId: string }>();
@@ -240,7 +228,6 @@ export function StyleTransferPage() {
           {/* Step indicator */}
           <div style={{ display: "flex", gap: 0, alignItems: "center", marginBottom: 20 }}>
             {["Capture", "Style", "Reconstruct"].map((label, i) => {
-              const stepMap: ImageStep[] = ["capture", "prompt", "done"];
               const stepOrder = { capture: 0, prompt: 1, styling: 1, review: 2, reconstructing: 2, done: 3 };
               const current = stepOrder[imageStep];
               const active = current >= i;
