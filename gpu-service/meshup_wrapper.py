@@ -11,23 +11,12 @@ MESHUP_DIR = Path("/opt/MeshUp")
 
 
 def ensure_meshup():
-    """Clone MeshUp if not present."""
+    """Verify MeshUp is installed (pre-installed in Docker image)."""
     if MESHUP_DIR.exists():
         return
-    logger.info("Cloning MeshUp...")
-    subprocess.run(
-        ["git", "clone", "https://github.com/threedle/MeshUp.git", str(MESHUP_DIR)],
-        check=True,
-    )
-    # Install deps
-    subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-r", str(MESHUP_DIR / "requirements.txt")],
-        check=True,
-    )
-    # Install nvdiffrast
-    subprocess.run(
-        [sys.executable, "-m", "pip", "install", "git+https://github.com/NVlabs/nvdiffrast.git"],
-        check=True,
+    raise RuntimeError(
+        f"MeshUp not found at {MESHUP_DIR}. "
+        "It should be pre-installed in the Docker image."
     )
 
 

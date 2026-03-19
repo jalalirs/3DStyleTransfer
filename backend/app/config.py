@@ -34,8 +34,9 @@ class Settings(BaseSettings):
     gcp_project_id: str = "m3ajem"
     gcp_location: str = "us-central1"
 
-    # GPU reconstruction service (runs on separate GPU machine via Tailscale)
-    gpu_service_url: str = ""  # e.g. "http://100.x.x.x:8877"
+    # GPU services
+    gpu_service_url: str = ""  # TRELLIS: e.g. "http://trellis:8877"
+    meshup_service_url: str = ""  # MeshUp: e.g. "http://meshup:8878"
 
     # Rendering
     render_width: int = 512

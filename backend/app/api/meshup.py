@@ -30,9 +30,9 @@ async def run_meshup(
     session: AsyncSession = Depends(get_session),
 ):
     """Run MeshUp: deform a 3D model toward a text-described style."""
-    gpu_url = settings.gpu_service_url
+    gpu_url = settings.meshup_service_url or settings.gpu_service_url
     if not gpu_url:
-        raise HTTPException(500, "GPU_SERVICE_URL not set")
+        raise HTTPException(500, "MESHUP_SERVICE_URL not set")
 
     # Get the source model
     model = await model_service.get_model_by_id(session, req.model_id)

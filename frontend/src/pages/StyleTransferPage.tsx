@@ -5,7 +5,6 @@ import { OrbitControls, Environment, Center } from "@react-three/drei";
 import { ModelLoader } from "../components/viewer/ModelLoader";
 import { getStaticUrl } from "../api/client";
 import { getConfig, type ModelEntry, type MethodEntry } from "../api/config";
-import { runMeshUp } from "../api/meshup";
 import { ModelViewer } from "../components/viewer/ModelViewer";
 
 type TargetType = "text" | "3d-render" | "3d-direct";
@@ -29,7 +28,7 @@ export function StyleTransferPage() {
   // Config data
   const [reference, setReference] = useState<ModelEntry | null>(null);
   const [targets, setTargets] = useState<ModelEntry[]>([]);
-  const [methods, setMethods] = useState<MethodEntry[]>([]);
+  const [, setMethods] = useState<MethodEntry[]>([]);
 
   // UI state
   const [targetType, setTargetType] = useState<TargetType>("text");
