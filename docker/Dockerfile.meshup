@@ -34,8 +34,8 @@ RUN pip install --no-cache-dir \
     pip install --no-cache-dir \
     torch-sparse -f https://data.pyg.org/whl/torch-2.4.1+cu124.html
 
-# nvdiffrast for differentiable rendering
-RUN pip install --no-cache-dir git+https://github.com/NVlabs/nvdiffrast.git
+# nvdiffrast for differentiable rendering (needs --no-build-isolation to find torch)
+RUN pip install --no-cache-dir --no-build-isolation git+https://github.com/NVlabs/nvdiffrast.git
 
 # CLIP for text-guided optimization
 RUN pip install --no-cache-dir git+https://github.com/openai/CLIP.git
