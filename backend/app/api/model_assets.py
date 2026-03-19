@@ -285,11 +285,12 @@ async def get_reconstruction_glb(model_id: str, recon_id: str):
 
 
 def _serve_reconstruction(model_id: str, recon_id: str):
-    recon_dir = settings.storage_dir / "model_assets" / model_id / "reconstructions"
-    # Try both extensions
-    for ext in [".glb", ".obj"]:
-        filepath = recon_dir / f"{recon_id}{ext}"
-        if filepath.exists():
-            media = "model/gltf-binary" if ext == ".glb" else "application/octet-stream"
-            return FileResponse(filepath, media_type=media, filename=f"model{ext}")
+    base_dir = settings.storage_dir / "model_assets" / model_id
+    # Check reconstructions/ and meshup/ subdirs
+    for subdir in ["reconstructions", "meshup"]:
+        for ext in [".glb", ".obj"]:
+            filepath = base_dir / subdir / f"{recon_id}{ext}"
+            if filepath.exists():
+                media = "model/gltf-binary" if ext == ".glb" else "application/octet-stream"
+                return FileResponse(filepath, media_type=media, filename=f"model{ext}")
     raise HTTPException(404, "Reconstruction not found")

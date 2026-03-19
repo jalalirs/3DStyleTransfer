@@ -87,5 +87,6 @@ export const createReconstruction = async (modelId: string, styledImageId: strin
 
 export const reconstructionUrl = (modelId: string, reconId: string, method?: string) => {
   const ext = method && (method === "trellis" || method === "hunyuan3d") ? "glb" : "obj";
+  // MeshUp results are served from the meshup subdir, but use the same reconstruction endpoint
   return `${api.defaults.baseURL}${base(modelId)}/reconstructions/${reconId}/model.${ext}`;
 };

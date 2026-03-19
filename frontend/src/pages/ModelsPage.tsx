@@ -10,6 +10,9 @@ const CATEGORIES = [
   "domes",
   "geometric_patterns",
   "mashrabiya",
+  "base_shapes",
+  "faiza",
+  "templates",
   "other",
 ];
 
