@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db, get_session, async_session
-from app.api import models, jobs, pipelines, workshop, model_assets, meshup, config
+from app.api import models, jobs, pipelines, workshop, model_assets, meshup, config, style_transfer
 
 
 @asynccontextmanager
@@ -53,6 +53,7 @@ app.include_router(workshop.router)
 app.include_router(model_assets.router)
 app.include_router(meshup.router)
 app.include_router(config.router)
+app.include_router(style_transfer.router)
 
 
 @app.get("/api/health")

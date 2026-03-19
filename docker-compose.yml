@@ -9,6 +9,7 @@ services:
       - ./backend/app:/app/app
       - ./assets:/data/assets
       - storage_data:/data/storage
+      - ./gcp-credentials.json:/app/gcp-credentials.json:ro
     environment:
       - DOCKER_ENV=1
       - PROJECT_ROOT=/data
@@ -16,6 +17,9 @@ services:
       - STORAGE_DIR=/data/storage
       - DATABASE_URL=sqlite+aiosqlite:////data/storage/style_transfer.db
       - REDIS_URL=redis://redis:6379/0
+      - GCP_CREDENTIALS_PATH=/app/gcp-credentials.json
+      - GCP_PROJECT_ID=m3ajem
+      - GCP_LOCATION=us-central1
       - GPU_SERVICE_URL=http://trellis:8877
       - MESHUP_SERVICE_URL=http://meshup:8878
     depends_on:
