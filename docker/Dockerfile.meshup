@@ -3,7 +3,7 @@ FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-devel
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git libgl1 libglib2.0-0 \
+    git libgl1 libglib2.0-0 libopengl0 libglfw3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone MeshUp
@@ -27,7 +27,14 @@ RUN pip install --no-cache-dir \
     pymeshlab \
     xatlas \
     libigl \
-    easydict
+    easydict \
+    imageio \
+    opencv-python-headless \
+    PyOpenGL \
+    glfw \
+    plyfile \
+    vedo \
+    cupy-cuda12x
 
 # torch_sparse and torch_scatter need prebuilt wheels for this torch+cuda combo
 RUN pip install --no-cache-dir \
