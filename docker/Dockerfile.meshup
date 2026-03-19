@@ -34,7 +34,9 @@ RUN pip install --no-cache-dir \
     pip install --no-cache-dir \
     torch-sparse -f https://data.pyg.org/whl/torch-2.4.1+cu124.html
 
-# nvdiffrast for differentiable rendering (needs --no-build-isolation to find torch)
+# nvdiffrast for differentiable rendering
+# Set CUDA arch explicitly — no GPU available during docker build
+ENV TORCH_CUDA_ARCH_LIST="8.9"
 RUN pip install --no-cache-dir --no-build-isolation git+https://github.com/NVlabs/nvdiffrast.git
 
 # CLIP for text-guided optimization
