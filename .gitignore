@@ -191,6 +191,13 @@ storage/thumbnails/
 assets/models/sketchfab/
 *.blend
 
+# Large reference/target OBJ files (sync manually between machines)
+assets/models/references/*.OBJ
+assets/models/references/*.obj
+assets/models/targets/*.obj
+assets/models/outputs/*
+!assets/models/outputs/.gitkeep
+
 # Abstra
 # Abstra is an AI-powered process automation framework.
 # Ignore directories containing user credentials, local state, and settings.

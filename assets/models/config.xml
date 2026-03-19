@@ -1,55 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <style-transfer-config>
 
-  <!-- Reference models: the style sources that users browse and select from -->
+  <!-- Reference models: Islamic design templates (style source) -->
   <references>
-    <model id="faiza-pg215" name="Faiza PG215" path="assets/models/faiza/PG215.OBJ" category="faiza" description="Faiza geometric pattern PG215" />
-    <model id="faiza-pg224" name="Faiza PG224" path="assets/models/faiza/PG224.OBJ" category="faiza" description="Faiza geometric pattern PG224" />
-    <model id="faiza-pg226" name="Faiza PG226" path="assets/models/faiza/PG226.OBJ" category="faiza" description="Faiza geometric pattern PG226" />
-    <model id="faiza-pg238" name="Faiza PG238" path="assets/models/faiza/PG238.OBJ" category="faiza" description="Faiza geometric pattern PG238" />
-    <model id="faiza-pg239" name="Faiza PG239" path="assets/models/faiza/PG239.OBJ" category="faiza" description="Faiza geometric pattern PG239" />
-    <model id="faiza-pg271" name="Faiza PG271" path="assets/models/faiza/PG271.OBJ" category="faiza" description="Faiza geometric pattern PG271" />
-    <model id="faiza-pg273" name="Faiza PG273" path="assets/models/faiza/PG273.obj" category="faiza" description="Faiza geometric pattern PG273" />
-    <model id="tpl-arabesque-panel" name="Arabesque Panel" path="assets/models/templates/arabesque_panel.glb" category="templates" description="Arabesque floral panel motif" />
-    <model id="tpl-carved-rosette" name="Carved Rosette" path="assets/models/templates/carved_rosette.glb" category="templates" description="Carved rosette ornament" />
-    <model id="tpl-girih-bowtie" name="Girih Bowtie" path="assets/models/templates/girih_bowtie.glb" category="templates" description="Girih bowtie tile" />
-    <model id="tpl-girih-decagon" name="Girih Decagon" path="assets/models/templates/girih_decagon.glb" category="templates" description="Girih decagon tile" />
-    <model id="tpl-girih-hexagon" name="Girih Hexagon" path="assets/models/templates/girih_hexagon.glb" category="templates" description="Girih hexagon tile" />
-    <model id="tpl-girih-pentagon" name="Girih Pentagon" path="assets/models/templates/girih_pentagon.glb" category="templates" description="Girih pentagon tile" />
-    <model id="tpl-girih-rhombus" name="Girih Rhombus" path="assets/models/templates/girih_rhombus.glb" category="templates" description="Girih rhombus tile" />
-    <model id="tpl-girih-tile-set" name="Girih Tile Set" path="assets/models/templates/girih_tile_set.glb" category="templates" description="Complete girih tile set" />
-    <model id="tpl-mashrabiya-lattice" name="Mashrabiya Lattice" path="assets/models/templates/mashrabiya_lattice.glb" category="templates" description="Mashrabiya lattice screen pattern" />
-    <model id="tpl-muqarnas-cell" name="Muqarnas Cell" path="assets/models/templates/muqarnas_cell.glb" category="templates" description="Single muqarnas cell unit" />
-    <model id="tpl-pointed-arch-profile" name="Pointed Arch Profile" path="assets/models/templates/pointed_arch_profile.glb" category="templates" description="Pointed arch cross-section profile" />
-    <model id="tpl-star-tile-8point" name="8-Point Star Tile" path="assets/models/templates/star_tile_8point.glb" category="templates" description="Eight-pointed star tile" />
-    <model id="tpl-faiza-template" name="Faiza Template" path="assets/models/templates/faiza_template.glb" category="templates" description="Faiza base template model" />
-    <model id="tpl-faiza-template-clean" name="Faiza Template Clean" path="assets/models/templates/faiza_template_clean.obj" category="templates" description="Cleaned faiza template" />
-    <model id="tpl-meshup-faiza" name="MeshUp Faiza Output" path="assets/models/templates/meshup_faiza_output/mesh.obj" category="templates" description="MeshUp output from faiza template" />
-    <model id="tpl-meshup-muqarnas" name="MeshUp Muqarnas Output" path="assets/models/templates/meshup_muqarnas_output/mesh.obj" category="templates" description="MeshUp output from muqarnas" />
+    <model id="faiza-pg215" name="Faiza PG215" path="assets/models/references/PG215.OBJ" category="faiza" description="Faiza geometric pattern PG215" />
+    <model id="faiza-pg224" name="Faiza PG224" path="assets/models/references/PG224.OBJ" category="faiza" description="Faiza geometric pattern PG224" />
+    <model id="faiza-pg226" name="Faiza PG226" path="assets/models/references/PG226.OBJ" category="faiza" description="Faiza geometric pattern PG226" />
+    <model id="faiza-pg238" name="Faiza PG238" path="assets/models/references/PG238.OBJ" category="faiza" description="Faiza geometric pattern PG238" />
+    <model id="faiza-pg239" name="Faiza PG239" path="assets/models/references/PG239.OBJ" category="faiza" description="Faiza geometric pattern PG239" />
+    <model id="faiza-pg271" name="Faiza PG271" path="assets/models/references/PG271.OBJ" category="faiza" description="Faiza geometric pattern PG271" />
+    <model id="faiza-pg273" name="Faiza PG273" path="assets/models/references/PG273.obj" category="faiza" description="Faiza geometric pattern PG273" />
   </references>
 
-  <!-- Target models: architectural shapes that style gets applied to -->
+  <!-- Target models: architectural elements to apply style to -->
   <targets>
-    <model id="tgt-muqarnas-vault" name="Muqarnas Vault" path="assets/models/muqarnas/muqarnas_vault.obj" category="muqarnas" description="Stalactite vault structure" />
-    <model id="tgt-pointed-arch" name="Pointed Arch" path="assets/models/arches/pointed_arch.obj" category="arches" description="Islamic pointed arch" />
-    <model id="tgt-islamic-column" name="Islamic Column" path="assets/models/arches/islamic_column.obj" category="arches" description="Islamic architectural column" />
-    <model id="tgt-mihrab-niche" name="Mihrab Niche" path="assets/models/arches/mihrab_niche.gltf" category="arches" description="Prayer niche (mihrab)" />
-    <model id="tgt-islamic-dome" name="Islamic Dome" path="assets/models/domes/islamic_dome.gltf" category="domes" description="Hemispherical dome" />
-    <model id="tgt-pyramid" name="Pyramid" path="assets/models/domes/pyramid.obj" category="domes" description="Pyramid shape" />
-    <model id="tgt-islamic-star-8" name="8-Point Star Pattern" path="assets/models/geometric_patterns/islamic_star_pattern_8point.obj" category="geometric_patterns" description="Eight-pointed star tessellation" />
-    <model id="tgt-arabesque-panel" name="Arabesque Panel" path="assets/models/geometric_patterns/arabesque_panel.obj" category="geometric_patterns" description="Arabesque decorative panel" />
-    <model id="tgt-dodecahedron" name="Dodecahedron" path="assets/models/geometric_patterns/dodecahedron.obj" category="geometric_patterns" description="Regular dodecahedron" />
-    <model id="tgt-icosahedron" name="Icosahedron" path="assets/models/geometric_patterns/icosahedron.obj" category="geometric_patterns" description="Regular icosahedron" />
-    <model id="tgt-octahedron" name="Octahedron" path="assets/models/geometric_patterns/octahedron.obj" category="geometric_patterns" description="Regular octahedron" />
-    <model id="tgt-mashrabiya" name="Mashrabiya Screen" path="assets/models/mashrabiya/mashrabiya_screen.obj" category="mashrabiya" description="Lattice window screen" />
-    <model id="tgt-minaret" name="Minaret" path="assets/models/other/minaret.gltf" category="other" description="Mosque minaret tower" />
-    <model id="tgt-balustrade" name="Balustrade" path="assets/models/base_shapes/balustrade.glb" category="base_shapes" description="Architectural railing" />
-    <model id="tgt-dome" name="Dome" path="assets/models/base_shapes/dome.glb" category="base_shapes" description="Simple dome shape" />
-    <model id="tgt-doric-column" name="Doric Column" path="assets/models/base_shapes/doric_column.glb" category="base_shapes" description="Classical Doric column" />
-    <model id="tgt-pointed-arch-base" name="Pointed Arch (base)" path="assets/models/base_shapes/pointed_arch.glb" category="base_shapes" description="Simple pointed arch shape" />
-    <model id="tgt-semicircular-arch" name="Semicircular Arch" path="assets/models/base_shapes/semicircular_arch.glb" category="base_shapes" description="Round arch shape" />
-    <model id="tgt-wall-panel" name="Wall Panel" path="assets/models/base_shapes/wall_panel.glb" category="base_shapes" description="Flat wall panel" />
-    <model id="tgt-window-frame" name="Window Frame" path="assets/models/base_shapes/window_frame.glb" category="base_shapes" description="Window frame shape" />
+    <model id="tgt-column" name="Column" path="assets/models/targets/column.obj" category="architecture" description="Classical column" />
   </targets>
 
   <!-- Available transfer methods -->
