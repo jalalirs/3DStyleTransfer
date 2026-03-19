@@ -34,7 +34,8 @@ RUN pip install --no-cache-dir \
     glfw \
     plyfile \
     vedo \
-    cupy-cuda12x
+    cupy-cuda12x \
+    tensorboard
 
 # torch_sparse and torch_scatter need prebuilt wheels for this torch+cuda combo
 RUN pip install --no-cache-dir \
