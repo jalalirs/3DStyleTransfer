@@ -5,8 +5,6 @@ services:
       dockerfile: docker/Dockerfile.backend
     ports:
       - "8111:8000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend/app:/app/app
       - ./assets:/data/assets
@@ -18,26 +16,17 @@ services:
       - STORAGE_DIR=/data/storage
       - DATABASE_URL=sqlite+aiosqlite:////data/storage/style_transfer.db
       - REDIS_URL=redis://redis:6379/0
-      # Google Cloud (Gemini image styling)
-      - GCP_CREDENTIALS_PATH=/app/gcp-credentials.json
-      - GCP_PROJECT_ID=m3ajem
-      - GCP_LOCATION=us-central1
-      # GPU services (internal Docker network)
       - GPU_SERVICE_URL=http://trellis:8877
       - MESHUP_SERVICE_URL=http://meshup:8878
     depends_on:
       - redis
-      - trellis
-      - meshup
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "8113:6379"
     volumes:
       - redis_data:/data
 
-  # --- GPU Services ---
+  # --- GPU Services (start with: docker compose --profile gpu up) ---
 
   trellis:
     build:
@@ -45,6 +34,7 @@ services:
       dockerfile: docker/Dockerfile.trellis
     ports:
       - "8877:8877"
+    profiles: [gpu]
     volumes:
       - model_cache:/root/.cache/huggingface
     environment:
@@ -64,6 +54,7 @@ services:
       dockerfile: docker/Dockerfile.meshup
     ports:
       - "8878:8878"
+    profiles: [gpu]
     volumes:
       - model_cache:/root/.cache
     environment:
