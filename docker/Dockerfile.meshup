@@ -26,7 +26,8 @@ RUN pip install --no-cache-dir \
     trimesh \
     pymeshlab \
     xatlas \
-    libigl
+    libigl \
+    easydict
 
 # torch_sparse and torch_scatter need prebuilt wheels for this torch+cuda combo
 RUN pip install --no-cache-dir \
