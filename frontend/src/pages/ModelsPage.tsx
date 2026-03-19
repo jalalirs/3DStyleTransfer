@@ -1,93 +1,48 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listModels, uploadModel } from "../api/models";
-import type { Model3D } from "../types/model";
-
-const CATEGORIES = [
-  "all",
-  "muqarnas",
-  "arches",
-  "domes",
-  "geometric_patterns",
-  "mashrabiya",
-  "base_shapes",
-  "faiza",
-  "templates",
-  "other",
-];
+import { getConfig, type ModelEntry } from "../api/config";
+import { getStaticUrl } from "../api/client";
+import { ModelViewer } from "../components/viewer/ModelViewer";
 
 export function ModelsPage() {
-  const [models, setModels] = useState<Model3D[]>([]);
+  const [references, setReferences] = useState<ModelEntry[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const fileInput = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadModels();
-  }, [selectedCategory]);
+    loadConfig();
+  }, []);
 
-  async function loadModels() {
+  async function loadConfig() {
     setLoading(true);
     try {
-      const cat = selectedCategory === "all" ? undefined : selectedCategory;
-      const data = await listModels(cat);
-      setModels(data);
+      const cfg = await getConfig();
+      setReferences(cfg.references);
     } catch (e) {
-      console.error("Failed to load models:", e);
+      console.error("Failed to load config:", e);
     }
     setLoading(false);
   }
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      await uploadModel(file);
-      loadModels();
-    } catch (err) {
-      console.error("Upload failed:", err);
-    }
-  }
+  const categories = ["all", ...Array.from(new Set(references.map((r) => r.category)))];
+  const filtered = selectedCategory === "all"
+    ? references
+    : references.filter((r) => r.category === selectedCategory);
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: 22 }}>Model Library</h1>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            ref={fileInput}
-            type="file"
-            accept=".obj,.gltf,.glb,.stl"
-            onChange={handleUpload}
-            style={{ display: "none" }}
-          />
-          <button
-            onClick={() => fileInput.current?.click()}
-            style={{
-              padding: "8px 16px",
-              background: "#1a1a2e",
-              border: "1px solid #333",
-              color: "#fff",
-              borderRadius: 6,
-              cursor: "pointer",
-            }}
-          >
-            Upload Model
-          </button>
-        </div>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ margin: 0, fontSize: 24 }}>Reference Models</h1>
+        <p style={{ margin: "6px 0 0", fontSize: 13, color: "#888" }}>
+          Select a style reference to begin style transfer
+        </p>
       </div>
 
       {/* Category filter */}
       <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
@@ -101,55 +56,63 @@ export function ModelsPage() {
               fontSize: 13,
             }}
           >
-            {cat.replace("_", " ")}
+            {cat.replace(/_/g, " ")}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <p style={{ color: "#888" }}>Loading models...</p>
+        <p style={{ color: "#888" }}>Loading...</p>
       ) : (
-        <div style={{ display: "flex", gap: 20 }}>
-          {/* Model grid */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: 12,
-              flex: 1,
-            }}
-          >
-            {models.map((m) => (
-              <div
-                key={m.id}
-                onClick={() => navigate(`/models/${m.id}`)}
-                style={{
-                  background: "#111",
-                  border: "1px solid #222",
-                  borderRadius: 8,
-                  padding: 12,
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                }}
-              >
-                <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>
-                  {m.name}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 16,
+          }}
+        >
+          {filtered.map((ref) => (
+            <div
+              key={ref.id}
+              onClick={() => navigate(`/transfer/${encodeURIComponent(ref.id)}`)}
+              onMouseEnter={() => setHoveredId(ref.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{
+                background: "#111",
+                border: hoveredId === ref.id ? "1px solid #4a9eff" : "1px solid #222",
+                borderRadius: 10,
+                overflow: "hidden",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              {/* 3D preview */}
+              <div style={{ height: 200, background: "#0a0a0a", pointerEvents: "none" }}>
+                <ModelViewer url={getStaticUrl(ref.path)} />
+              </div>
+              <div style={{ padding: 14 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
+                  {ref.name}
                 </div>
-                <div style={{ fontSize: 11, color: "#888" }}>
-                  {m.category} | {m.original_format.toUpperCase()}
+                <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
+                  {ref.description}
                 </div>
-                <div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>
-                  {m.vertex_count > 0
-                    ? `${m.vertex_count.toLocaleString()} verts`
-                    : m.source}
+                <div style={{
+                  display: "inline-block",
+                  padding: "2px 8px",
+                  fontSize: 10,
+                  color: "#4a9eff",
+                  background: "#1a1a2e",
+                  borderRadius: 10,
+                }}>
+                  {ref.category}
                 </div>
               </div>
-            ))}
-            {models.length === 0 && (
-              <p style={{ color: "#666" }}>No models found. Start the backend to seed built-in models.</p>
-            )}
-          </div>
-
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <p style={{ color: "#666" }}>No reference models found. Check backend connection.</p>
+          )}
         </div>
       )}
     </div>

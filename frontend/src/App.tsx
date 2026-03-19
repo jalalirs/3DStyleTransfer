@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "./components/layout/MainLayout";
 import { ModelsPage } from "./pages/ModelsPage";
+import { StyleTransferPage } from "./pages/StyleTransferPage";
 import { ModelDetailPage } from "./pages/ModelDetailPage";
 import { JobsPage } from "./pages/JobsPage";
 import { JobDetailPage } from "./pages/JobDetailPage";
@@ -12,6 +13,7 @@ export default function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<ModelsPage />} />
+          <Route path="/transfer/:refId" element={<StyleTransferPage />} />
           <Route path="/models/:modelId" element={<ModelDetailPage />} />
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/jobs/:jobId" element={<JobDetailPage />} />
