@@ -2,33 +2,49 @@ FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-devel
 
 WORKDIR /app
 
-# System deps for rendering and git
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    libgl1 \
-    libglib2.0-0 \
-    libegl1 \
-    libgomp1 \
+    git libgl1 libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Clone MeshUp at build time
+# Clone MeshUp
 RUN git clone https://github.com/threedle/MeshUp.git /opt/MeshUp
 
-# Install MeshUp requirements
-RUN pip install --no-cache-dir -r /opt/MeshUp/requirements.txt
+# Install MeshUp deps with relaxed versions (upstream pins are broken for py3.11)
+RUN pip install --no-cache-dir \
+    diffusers \
+    transformers \
+    sentencepiece \
+    protobuf \
+    tokenizers \
+    huggingface_hub \
+    tqdm \
+    kornia \
+    matplotlib \
+    cholespy \
+    PyGLM \
+    scipy \
+    trimesh \
+    pymeshlab \
+    xatlas \
+    libigl
 
-# Install nvdiffrast (needed for differentiable rendering)
+# torch_sparse and torch_scatter need prebuilt wheels for this torch+cuda combo
+RUN pip install --no-cache-dir \
+    torch-scatter -f https://data.pyg.org/whl/torch-2.4.1+cu124.html && \
+    pip install --no-cache-dir \
+    torch-sparse -f https://data.pyg.org/whl/torch-2.4.1+cu124.html
+
+# nvdiffrast for differentiable rendering
 RUN pip install --no-cache-dir git+https://github.com/NVlabs/nvdiffrast.git
 
-# Install CLIP
+# CLIP for text-guided optimization
 RUN pip install --no-cache-dir git+https://github.com/openai/CLIP.git
 
-# Install server dependencies
-RUN pip install --no-cache-dir fastapi uvicorn python-multipart httpx
+# Server deps
+RUN pip install --no-cache-dir fastapi uvicorn python-multipart
 
-# Copy server code
-COPY gpu-service/server_meshup.py ./server_meshup.py
-COPY gpu-service/meshup_wrapper.py ./meshup_wrapper.py
+COPY gpu-service/server_meshup.py .
+COPY gpu-service/meshup_wrapper.py .
 
 EXPOSE 8878
 
