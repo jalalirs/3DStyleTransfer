@@ -5,6 +5,7 @@ import { OrbitControls, Environment, Center } from "@react-three/drei";
 import { ModelLoader } from "../components/viewer/ModelLoader";
 import { getStaticUrl } from "../api/client";
 import { getConfig, type ModelEntry, type MethodEntry } from "../api/config";
+import { runMeshUp, type MeshUpResult } from "../api/meshup";
 import { ModelViewer } from "../components/viewer/ModelViewer";
 
 type TargetType = "text" | "3d-render" | "3d-direct";
@@ -38,6 +39,8 @@ export function StyleTransferPage() {
   const [iterations, setIterations] = useState(500);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState("");
+  const [completed, setCompleted] = useState(false);
+  const [result, setResult] = useState<MeshUpResult | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
 
   // For image capture from 3d-render flow
@@ -72,17 +75,19 @@ export function StyleTransferPage() {
     if (!reference) return;
     setRunning(true);
     setError("");
+    setCompleted(false);
+    setResult(null);
     setResultUrl(null);
 
     try {
       if (targetType === "text") {
-        // MeshUp: deform reference mesh with text prompt
-        // We need a model_id in the backend DB. For now, use the reference path
-        // to find or create a model entry. This will be wired to the meshup API.
-        setError("MeshUp integration: backend needs the model registered in DB. Use the model detail page for now, or register via API.");
+        const res = await runMeshUp(reference.path, prompt, iterations);
+        setResult(res);
+        setCompleted(true);
+        // Try to load the output model locally (assumes shared folder sync)
+        setResultUrl(getStaticUrl(res.output_path));
       } else if (targetType === "3d-render") {
-        // Image style transfer flow
-        setError("Image style transfer: select a target 3D model, capture a view, and style it. Full pipeline coming soon.");
+        setError("Image style transfer: coming soon.");
       } else {
         setError("3D-to-3D transfer is not yet available.");
       }
@@ -101,7 +106,7 @@ export function StyleTransferPage() {
 
   return (
     <div>
-      {/* Header: Reference info */}
+      {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ margin: 0, fontSize: 22 }}>Style Transfer</h1>
         <p style={{ margin: "4px 0 0", fontSize: 13, color: "#888" }}>
@@ -116,7 +121,22 @@ export function StyleTransferPage() {
         </div>
       )}
 
-      {/* Reference 3D viewer */}
+      {/* Completed banner */}
+      {completed && result && (
+        <div style={{ padding: 16, background: "#1a2a1a", border: "1px solid #5cb85c", borderRadius: 8, marginBottom: 20 }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: "#5cb85c", marginBottom: 6 }}>
+            Generation completed!
+          </div>
+          <div style={{ fontSize: 13, color: "#aaa", marginBottom: 4 }}>
+            Output: <code style={{ color: "#ccc" }}>{result.output_path}</code>
+          </div>
+          <div style={{ fontSize: 12, color: "#888" }}>
+            Sync this file to your Mac to view it below, then refresh the page.
+          </div>
+        </div>
+      )}
+
+      {/* Reference 3D viewer (+ result if available) */}
       <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
         <div style={{ flex: 1, position: "relative" }}>
           <div style={{
@@ -131,8 +151,24 @@ export function StyleTransferPage() {
           </div>
         </div>
 
-        {/* Show target preview if selected */}
-        {targetType === "3d-render" && selectedTarget && (
+        {/* Result viewer */}
+        {resultUrl && (
+          <div style={{ flex: 1, position: "relative" }}>
+            <div style={{
+              position: "absolute", top: 8, left: 8, zIndex: 10,
+              background: "rgba(0,0,0,0.7)", color: "#5cb85c", padding: "4px 10px",
+              borderRadius: 4, fontSize: 11, fontWeight: 600,
+            }}>
+              Result
+            </div>
+            <div style={{ height: 400, background: "#111", borderRadius: 8, overflow: "hidden" }}>
+              <ModelViewer url={resultUrl} />
+            </div>
+          </div>
+        )}
+
+        {/* Target preview for 3d-render */}
+        {!resultUrl && targetType === "3d-render" && selectedTarget && (
           <div style={{ flex: 1, position: "relative" }}>
             <div style={{
               position: "absolute", top: 8, left: 8, zIndex: 10,
@@ -163,21 +199,6 @@ export function StyleTransferPage() {
               >
                 Capture View
               </button>
-            </div>
-          </div>
-        )}
-
-        {targetType === "3d-direct" && selectedTarget && (
-          <div style={{ flex: 1, position: "relative" }}>
-            <div style={{
-              position: "absolute", top: 8, left: 8, zIndex: 10,
-              background: "rgba(0,0,0,0.7)", color: "#4a9eff", padding: "4px 10px",
-              borderRadius: 4, fontSize: 11, fontWeight: 600,
-            }}>
-              Target
-            </div>
-            <div style={{ height: 400, background: "#111", borderRadius: 8, overflow: "hidden" }}>
-              <ModelViewer url={getStaticUrl(selectedTarget.path)} />
             </div>
           </div>
         )}
@@ -274,7 +295,6 @@ export function StyleTransferPage() {
               Select a target 3D model. Rotate it to a good angle, capture a view, then style it with the reference.
             </p>
 
-            {/* Target category filter */}
             <div style={{ display: "flex", gap: 4, marginBottom: 12, flexWrap: "wrap" }}>
               {targetCategories.map((cat) => (
                 <button
@@ -292,7 +312,6 @@ export function StyleTransferPage() {
               ))}
             </div>
 
-            {/* Target model grid */}
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
@@ -342,16 +361,6 @@ export function StyleTransferPage() {
           </div>
         )}
       </section>
-
-      {/* Result viewer */}
-      {resultUrl && (
-        <section style={{ marginBottom: 32 }}>
-          <h2 style={{ fontSize: 16, marginBottom: 12, color: "#ccc" }}>Result</h2>
-          <div style={{ height: 450, background: "#111", borderRadius: 8, overflow: "hidden" }}>
-            <ModelViewer url={resultUrl} />
-          </div>
-        </section>
-      )}
     </div>
   );
 }

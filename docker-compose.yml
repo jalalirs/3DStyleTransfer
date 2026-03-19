@@ -57,6 +57,7 @@ services:
     profiles: [gpu]
     volumes:
       - /home/jalalirs/.cache:/root/.cache
+      - ./assets:/data/assets
     environment:
       - CUDA_VISIBLE_DEVICES=0
     deploy:
