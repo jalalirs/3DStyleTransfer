@@ -35,7 +35,8 @@ RUN pip install --no-cache-dir \
     plyfile \
     vedo \
     cupy-cuda12x \
-    tensorboard
+    tensorboard \
+    "imageio[ffmpeg]"
 
 # torch_sparse and torch_scatter need prebuilt wheels for this torch+cuda combo
 RUN pip install --no-cache-dir \
