@@ -64,6 +64,7 @@ services:
       - ./assets:/data/assets
     environment:
       - CUDA_VISIBLE_DEVICES=0
+      - HF_TOKEN=${HF_TOKEN}
     deploy:
       resources:
         reservations:
